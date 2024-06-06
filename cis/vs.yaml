@@ -1,0 +1,19 @@
+ apiVersion: "cis.f5.com/v1"
+ kind: VirtualServer
+ metadata:
+   name: nginx
+   labels:
+     f5cr: "true"
+ spec:
+   host: coffee.example.com
+   ipamLabel: prod
+#  virtualServerAddress: "172.16.3.4"
+
+   pools:
+   - path: /
+     service: my-service
+     servicePort: 80
+   serviceAddress:
+   - icmpEcho: "enable"
+     arpEnabled: true
+     routeAdvertisement: "all"

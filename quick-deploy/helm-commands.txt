@@ -1,0 +1,7 @@
+
+
+create Apps:
+for a in {1..100}; do helm install app$a ./app --set app.name=test-app-$a --set app.container.image=nginx ; done;
+
+create BIG-IP VS + EDNS:
+for a in {1..100}; do helm install vs-$a ./bigip-vs-edns  --set vs.fqdn=test-`tail -50 /var/tmp/helm-dvir/f5-cis-playground/quick-deploy/bigip-vs-edns/words | grep -v '!-' | sort -R | head -1`-`tail -50 /var/tmp/helm-dvir/f5-cis-playground/quick-deploy/bigip-vs-edns/words | grep -v '!-' | sort -R | head -1`-`tail -50 /var/tmp/helm-dvir/f5-cis-playground/quick-deploy/bigip-vs-edns/words | grep -v '!-' | sort -R | head -1`.app.com --set vs.service=test-app-$a --set vs.ipamlabel=stg --set vs.name=`tail -50 /var/tmp/helm-dvir/f5-cis-playground/quick-deploy/bigip-vs-edns/words | grep -v '!-' | sort -R | head -1`-`tail -50 /var/tmp/helm-dvir/f5-cis-playground/quick-deploy/bigip-vs-edns/words | grep -v '!-' | sort -R | head -1`-`tail -50 /var/tmp/helm-dvir/f5-cis-playground/quick-deploy/bigip-vs-edns/words | grep -v '!-' | sort -R | head -1`-$a; done;

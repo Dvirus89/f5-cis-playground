@@ -1,0 +1,6 @@
+apiVersion: v2
+name: BIGIP vs and DNS
+description: A Helm chart for BIG-IP VS and EDNS
+type: application
+version: 0.1.0
+appVersion: 1.16.0
