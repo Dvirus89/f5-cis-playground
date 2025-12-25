@@ -1,5 +1,5 @@
 create auth partition f5-cis-dc1
-microk8s kubectl create secret generic f5-bigip-ctlr-login -n kube-system --from-literal=username=admin --from-literal=password=ilovelseep --from-literal=url=https://10.1.1.4
+microk8s kubectl create secret generic f5-bigip-ctlr-login -n kube-system --from-literal=username=admin --from-literal=password=ilovesleep --from-literal=url=https://10.1.1.4
 microk8s helm repo add f5-stable https://f5networks.github.io/charts/stable
 # edit values-microk8s.yaml file with the proper bigip ip address and the partition name
 microk8s helm install -f values-microk8s.yaml f5-cis f5-stable/f5-bigip-ctlr -n kube-system
