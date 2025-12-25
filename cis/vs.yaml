@@ -6,12 +6,11 @@
      f5cr: "true"
  spec:
    host: coffee.example.com
-   ipamLabel: prod
-#  virtualServerAddress: "172.16.3.4"
-
+     #ipamLabel: prod
+   virtualServerAddress: "172.16.3.4"
    pools:
    - path: /
-     service: my-service
+     service: nginx
      servicePort: 80
    serviceAddress:
    - icmpEcho: "enable"

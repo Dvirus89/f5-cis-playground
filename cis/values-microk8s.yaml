@@ -22,8 +22,8 @@ args:
   # NOTE: helm has difficulty with values using `-`; `_` are used for naming
   # and are replaced with `-` during rendering.
   # REQUIRED Params
-  bigip_url: 10.1.1.4 
-  bigip_partition: microk8s-dc1
+  bigip_url: 10.1.1.6
+  bigip_partition: microk8s-dc3
   as3_validation: true
   ## OPTIONAL PARAMS -- uncomment and provide values for those you wish to use.
   ## all config options
