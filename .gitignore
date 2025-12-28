@@ -1,0 +1,10 @@
+.kube
+.kube/*
+*/.config/*
+*/.config
+*/.cache/*
+*/.cache
+.config/*
+.config
+.cache/*
+.cache
