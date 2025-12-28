@@ -1,0 +1,159 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluent-bit
+  namespace: logging
+spec:
+  selector:
+    matchLabels:
+      app: fluent-bit
+  template:
+    metadata:
+      labels:
+        app: fluent-bit
+    spec:
+      serviceAccountName: fluent-bit
+      containers:
+        - name: fluent-bit
+          image: cr.fluentbit.io/fluent/fluent-bit:2.2
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log
+            - name: containers
+              mountPath: /var/lib/containerd
+              readOnly: true
+            - name: config
+              mountPath: /fluent-bit/etc
+      volumes:
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: containers
+          hostPath:
+            path: /var/lib/containerd
+        - name: config
+          configMap:
+            name: fluent-bit-config
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fluent-bit
+  namespace: logging
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fluent-bit
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: fluent-bit
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: fluent-bit
+subjects:
+  - kind: ServiceAccount
+    name: fluent-bit
+    namespace: logging
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+  namespace: logging
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        Flush        1
+        Log_Level    info
+        Daemon       off
+        Parsers_File parsers.conf
+
+    # ------------------------
+    # NGINX logs
+    # ------------------------
+    [INPUT]
+        Name              tail
+        Path              /var/log/containers/*nginx*.log
+        Parser            cri
+        Tag               nginx.*
+        Refresh_Interval  5
+        Mem_Buf_Limit     10MB
+        Skip_Long_Lines   On
+
+    # ------------------------
+    # F5 CIS logs
+    # ------------------------
+    [INPUT]
+        Name              tail
+        Path              /var/log/containers/*f5-bigip*.log
+        Parser            cri
+        Tag               f5.*
+        Refresh_Interval  5
+        Mem_Buf_Limit     10MB
+        Skip_Long_Lines   On
+
+    # ------------------------
+    # Kubernetes metadata (for both)
+    # ------------------------
+    [FILTER]
+        Name                kubernetes
+        Match               nginx.*
+        Kube_Tag_Prefix     kube.var.log.containers.
+        Merge_Log           On
+        Keep_Log            Off
+
+    [FILTER]
+        Name                kubernetes
+        Match               f5.*
+        Kube_Tag_Prefix     kube.var.log.containers.
+        Merge_Log           On
+        Keep_Log            Off
+
+    # ------------------------
+    # Loki output (same host)
+    # ------------------------
+    [OUTPUT]
+        Name              loki
+        Match             nginx.*
+        Host              10.1.1.9 
+        Port              30972
+        Labels            job=nginx,dc=DC1,namespace=$kubernetes['namespace_name'],pod=$kubernetes['pod_name'],container=$kubernetes['container_name']
+        Line_Format       json
+
+    [OUTPUT]
+        Name              loki
+        Match             f5.*
+        Host              10.1.1.9 
+        Port              30972
+        Labels            job=f5-cis,dc=DC1,namespace=$kubernetes['namespace_name'],pod=$kubernetes['pod_name'],container=$kubernetes['container_name']
+        Line_Format       json
+
+    # ------------------------
+    # Debug (optional)
+    # ------------------------
+    [OUTPUT]
+        Name   stdout
+        Match  *
+
+  parsers.conf: |
+    [PARSER]
+        Name        cri
+        Format      regex
+        Regex       ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L%z
