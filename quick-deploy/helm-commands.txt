@@ -4,7 +4,7 @@
 for a in {1..100}; do helm install app$a ./app --set app.name=test-app-$a --set app.container.image=nginx ; done;
 
 # create BIG-IP VS + EDNS:
-for a in {1..100}; do rand=`tail -50 /var/tmp/helm-dvir/f5-cis-playground/quick-deploy/bigip-vs-edns/words | grep -v '!-' | sort -R | head -1`-`tail -50 /var/tmp/helm-dvir/f5-cis-playground/quick-deploy/bigip-vs-edns/words | grep -v '!-' | sort -R | head -1`-`tail -50 /var/tmp/helm-dvir/f5-cis-playground/quick-deploy/bigip-vs-edns/words | grep -v '!-' | sort -R | head -1`; helm install vs-$a ./bigip-vs-edns  --set vs.fqdn=$rand-$a.app.com --set vs.service=test-app-$a --set vs.ipamlabel=stg --set vs.name=$rand-$a; done;
+for a in {1..100}; do rand=`tail -50 ./bigip-vs-edns/words | grep -v '!-' | sort -R | head -1`-`tail -50 ./bigip-vs-edns/words | grep -v '!-' | sort -R | head -1`-`tail -50 ./bigip-vs-edns/words | grep -v '!-' | sort -R | head -1`; helm install vs-$a ./bigip-vs-edns  --set vs.fqdn=$rand-$a.app.com --set vs.service=test-app-$a --set vs.ipamlabel=stg --set vs.name=$rand-$a; done;
 
 # ruin some random nginx listeners - and make some pool member unavailable. 
 oc get pods | grep 'app-' | sort -R | head -n 60 | awk '{print $1}' | xargs -I {} oc rsh {} bash -c "/usr/bin/sed -i \"s/80;/90;/g\" /etc/nginx/conf.d/default.conf; nginx -s reload"

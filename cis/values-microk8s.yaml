@@ -22,8 +22,8 @@ args:
   # NOTE: helm has difficulty with values using `-`; `_` are used for naming
   # and are replaced with `-` during rendering.
   # REQUIRED Params
-  bigip_url: 10.1.1.6
-  bigip_partition: microk8s-dc3
+  bigip_url: 10.1.1.4
+  bigip_partition: microk8s-dc1
   as3_validation: true
   ## OPTIONAL PARAMS -- uncomment and provide values for those you wish to use.
   ## all config options
@@ -65,7 +65,7 @@ args:
   # gtm_bigip_url
   # gtm_bigip_username
   ## for using the F5 IPAM Controller, see more on https://clouddocs.f5.com/containers/latest/userguide/ipam/
-  # ipam : true
+  ipam : true
   controller_mode: customresource
   ## for configuring nextgen openshift routes, see more on https://clouddocs.f5.com/containers/latest/userguide/next-gen-routes/
   # extended_spec_configmap: default/extended-cm

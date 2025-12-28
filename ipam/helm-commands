@@ -1,0 +1,3 @@
+microk8s helm repo add f5-ipam-stable https://f5networks.github.io/f5-ipam-controller/helm-charts/stable
+microk8s helm install -n kube-system -f values.yaml f5-cis-ipam f5-ipam-stable/f5-ipam-controller
+microk8s helm uninstall -n kube-system f5-cis-ipam

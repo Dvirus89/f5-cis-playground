@@ -27,7 +27,7 @@ args:
   infoblox_netview: netview_10_145_77_87
 
   # REQUIRED Params if provider is f5-ip-provider
-  ip_range: '{"test":"10.1.10.50-10.1.10.90", "prod":"10.1.10.120-10.1.10.220"}'
+  ip_range: '{"test":"10.1.50.1-10.1.50.200", "prod":"10.1.60.10-10.1.60.200", "stg":"10.1.100.10-10.1.100.200"}'
 
   # OPTIONAL PARAMS -- uncomment and provide values for those you wish to use.
   # log-level

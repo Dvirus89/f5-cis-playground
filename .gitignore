@@ -1,4 +1,5 @@
 .kube
+**/.kube/cache/
 .kube/cache/
 ./quick-deploy/.kube
 .kube/*
