@@ -1,4 +1,6 @@
 .kube
+.kube/cache/
+./quick-deploy/.kube
 .kube/*
 */.config/*
 */.config
