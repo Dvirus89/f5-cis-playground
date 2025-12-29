@@ -1,0 +1,8 @@
+microk8s kubectl create namespace observability
+microk8s helm repo add grafana https://grafana.github.io/helm-charts
+
+microk8s helm install my-grafana grafana/grafana -n observability --set service.type=NodePort --set persistence.enabled=true --set adminPassword=ilovesleep --set initChownData.enabled=false --set securityContext.fsGroup=472
+
+microk8s helm get notes my-grafana -n observability
+microk8s kubectl get secret -n observability my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+microk8s helm uninstall my-grafana -n observability
