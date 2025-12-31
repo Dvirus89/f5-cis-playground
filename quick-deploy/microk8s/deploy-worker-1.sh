@@ -2,6 +2,9 @@
 apt-get update -y
 snap install microk8s --classic
 microk8s status -w
+echo 'alias k="microk8s kubectl"' >> ~/.bashrc
+echo 'alias kubectl="microk8s kubectl"' >> ~/.bashrc
+echo 'alias helm="microk8s helm"' >> ~/.bashrc
 cat /etc/netplan/50-cloud-init.yaml | sed 's/ens5/ens6/g' > /etc/netplan/70-cloud-init.yaml
 netplan apply
 sed -i 's@10.1.0.0/16@10.100.0.0/16@g' /var/snap/microk8s/current/args/cni-network/cni.yaml
