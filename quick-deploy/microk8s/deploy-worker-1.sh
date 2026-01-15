@@ -19,8 +19,4 @@ microk8s enable metrics-server
 microk8s enable dashboard
 microk8s enable hostpath-storage
 snap restart microk8s
-
-
-
-
-
+./fix-worker-subnet.sh
